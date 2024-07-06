@@ -1,0 +1,226 @@
+import json
+import random
+import qdarktheme
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QTextEdit, QWidget, QComboBox, QListWidget, QStackedWidget, QSizePolicy, QScrollBar, QScrollArea, QGridLayout
+
+file_path_data = 'dataforged.json'
+file_path_schema = 'schema.json'
+darkmd = qdarktheme
+
+class Oracle:
+    def __init__(self, data):
+        self.id = data.get("$id", "")
+        self.name = data.get("Name", "")
+        self.description = data.get("Description", "")
+        self.table = data.get("Table", [])
+        self.oracles = [Oracle(o) for o in data.get("Oracles", [])]
+        self.usage = data.get("Usage", {})
+        self.suggestions = self.usage.get("Suggestions", {})
+
+class OracleRollResult:
+    def __init__(self, oracle):
+        self.oracle = oracle
+        self.roll = None
+        self.description = None
+        self.result_id = None
+        self.child_results = []
+        self.follow_up_tables = []
+
+    def with_table_result(self, table_item, roll):
+        self.roll = roll
+        self.description = table_item["Result"]
+        self.result_id = table_item["$id"]
+
+class OracleRepository:
+    def __init__(self):
+        self.oracles = []
+        self.data_access()
+
+    def data_access(self):
+        with open(file_path_data, "r", encoding='utf-8') as f1:
+            data = json.load(f1)
+        self.oracles = [Oracle(o) for o in data]
+
+    def get_oracle_by_id(self, oracle_id):
+        for oracle in self.oracles:
+            if oracle.id == oracle_id:
+                return oracle
+        return None
+
+class OracleRoller:
+    def __init__(self, oracle_repository):
+        self.oracle_repository = oracle_repository
+
+    def get_roll_result(self, oracle):
+        result = OracleRollResult(oracle)
+
+        for follow_up_id in oracle.suggestions.get("Oracle rolls", []):
+            follow_up_oracle = self.oracle_repository.get_oracle_by_id(follow_up_id)
+            if follow_up_oracle:
+                result.follow_up_tables.append(follow_up_oracle)
+
+        if oracle.table:
+            roll = random.randint(1, 100)
+            table_item = next((t for t in oracle.table if t.get("Floor", 0) <= roll <= t.get("Ceiling", 100)), None)
+            if table_item:
+                result.with_table_result(table_item, roll)
+
+        for sub_oracle in oracle.oracles:
+            result.child_results.append(self.get_roll_result(sub_oracle))
+
+        return result
+
+# ... (Oracle, OracleRollResult, OracleRepository, and OracleRoller classes remain the same)
+
+class RootCategoryWidget(QWidget):
+    def __init__(self, oracle, main_window, parent=None):
+        super().__init__(parent)
+        self.oracle = oracle
+        self.main_window = main_window
+        self.setFixedSize(350, 350)
+
+        layout = QVBoxLayout()
+        label = QLabel(oracle.name)
+        label.setWordWrap(True)
+        label.setStyleSheet("font-weight: bold; font-family: 'Arial'; font-size: 20px; color: white; text-transform: uppercase;")
+        layout.addWidget(label)
+        self.setLayout(layout)
+
+        self.setStyleSheet("background-color: teal; border: 2px solid white; border-radius: 10px;")
+
+    def mousePressEvent(self, event):
+        self.main_window.show_subcategories(self.oracle)
+
+class SubcategoryWidget(QWidget):
+    def __init__(self, oracle, main_window, parent=None):
+        super().__init__(parent)
+        self.oracle = oracle
+        self.main_window = main_window
+        self.setFixedSize(350, 350)
+
+        self.layout = QVBoxLayout()
+        self.label = QLabel(oracle.name)
+        self.label.setWordWrap(True)
+        self.label.setStyleSheet("font-weight: bold; font-family: 'Arial'; font-size: 20px; color: white; text-transform: uppercase; subcontrol-position: center;")
+        self.layout.addWidget(self.label)
+        self.setLayout(self.layout)
+
+        self.setStyleSheet("background-color: teal; border: 2px solid white; border-radius: 10px; subcontrol-position: center;")
+
+    def mouseDoubleClickEvent(self, event):
+        self.main_window.roll_oracle(self.oracle, self)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.RightButton:
+            self.main_window.show_root_categories()
+
+class TableRollResultWidget(QWidget):
+    def __init__(self, roll_result, main_window, parent=None):
+        super().__init__(parent)
+        self.roll_result = roll_result
+        self.main_window = main_window
+        self.setFixedSize(350, 350)
+
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel(f"Oracle: {roll_result.oracle.name}"))
+        if roll_result.roll:
+            layout.addWidget(QLabel(f"Roll: {roll_result.roll}"))
+        if roll_result.description:
+            description_label = QLabel(f"Description: {roll_result.description}")
+            description_label.setWordWrap(True)
+            layout.addWidget(description_label)
+        if roll_result.follow_up_tables:
+            layout.addWidget(QLabel("Follow-up Tables:"))
+            for follow_up in roll_result.follow_up_tables:
+                layout.addWidget(QLabel(f"- {follow_up.name}"))
+        if roll_result.child_results:
+            layout.addWidget(QLabel("Child Results:"))
+            for child_result in roll_result.child_results:
+                child_layout = QVBoxLayout()
+                child_layout.addWidget(QLabel(f"Oracle: {child_result.oracle.name}"))
+                if child_result.roll:
+                    child_layout.addWidget(QLabel(f"Roll: {child_result.roll}"))
+                if child_result.description:
+                    child_description_label = QLabel(f"Description: {child_result.description}")
+                    child_description_label.setWordWrap(True)
+                    child_layout.addWidget(child_description_label)
+                layout.addLayout(child_layout)
+        self.setLayout(layout)
+
+        self.setStyleSheet("background-color: teal; border: 2px solid white; border-radius: 10px; color: white;")
+
+    def mouseDoubleClickEvent(self, event):
+        self.main_window.re_roll_oracle(self.roll_result.oracle, self)
+
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Oracle Roller")
+        self.setGeometry(100, 100, 800, 600)
+
+        self.oracle_repository = OracleRepository()
+        self.oracle_roller = OracleRoller(self.oracle_repository)
+
+        central_widget = QWidget()
+        layout = QVBoxLayout(central_widget)
+
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidgetResizable(True)
+        layout.addWidget(self.scroll_area)
+
+        self.scroll_content = QWidget()
+        self.scroll_layout = QGridLayout(self.scroll_content)
+        self.scroll_area.setWidget(self.scroll_content)
+
+        self.setCentralWidget(central_widget)
+
+        self.populate_root_categories()
+
+    def populate_root_categories(self):
+        oracles = self.oracle_repository.oracles
+        for i, oracle in enumerate(oracles):
+            widget = RootCategoryWidget(oracle, self)
+            self.scroll_layout.addWidget(widget, i // 5, i % 5)
+
+    def show_root_categories(self):
+        self.clear_layout(self.scroll_layout)
+        self.populate_root_categories()
+
+    def show_subcategories(self, root_category):
+        self.clear_layout(self.scroll_layout)
+        for i, subcategory in enumerate(root_category.oracles):
+            widget = SubcategoryWidget(subcategory, self)
+            self.scroll_layout.addWidget(widget, i // 5, i % 5)
+
+    def roll_oracle(self, oracle, widget):
+        roll_result = self.oracle_roller.get_roll_result(oracle)
+        self.display_roll_result(roll_result, widget)
+
+    def display_roll_result(self, roll_result, widget):
+        table_roll_widget = TableRollResultWidget(roll_result, self)
+        index = self.scroll_layout.indexOf(widget)
+        if index != -1:
+            row, col, _, _ = self.scroll_layout.getItemPosition(index)
+            self.scroll_layout.removeWidget(widget)
+            widget.deleteLater()
+            self.scroll_layout.addWidget(table_roll_widget, row, col)
+
+    def clear_layout(self, layout):
+        while layout.count():
+            child = layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
+
+    def re_roll_oracle(self, oracle, widget):
+        roll_result = self.oracle_roller.get_roll_result(oracle)
+        self.display_roll_result(roll_result, widget)
+# ... (rest of the code remains the same)
+
+if __name__ == "__main__":
+    app = QApplication([])
+    app.setStyleSheet(darkmd.load_stylesheet("dark"))
+    window = MainWindow()
+    window.show()
+    app.exec_()
