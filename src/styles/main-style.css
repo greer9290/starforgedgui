@@ -71,6 +71,11 @@
     font-size: 1.2em;
   }
 
+  select {
+    font-size: 1.4em;
+    height: 40px;
+  }
+
   #roll-oracle {
     position: relative;
     display: inline-flex;
