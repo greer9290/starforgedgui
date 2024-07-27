@@ -11,7 +11,7 @@ let originalHeight = `${bodySelector.offsetHeight}px`;
 
 const getData = async () => {
     try {
-        const url = '../../dataforged.json';
+        const url = 'https://raw.githubusercontent.com/greer9290/starforgedgui/main/dataforged.json'; //raw content link to json for GH pages deployment
         const res = await fetch(url);
         let json = await res.json();
         return json;
