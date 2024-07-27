@@ -68,7 +68,7 @@
     margin: 10px;
     gap: 10px;
     width: 90%;
-    font-size: 0.9em;
+    font-size: 1.2em;
   }
 
   #roll-oracle {
@@ -81,7 +81,7 @@
     text-decoration: none;
     padding: 0.5rem 1rem;
     border-radius: 0.375em;
-    font-size: 1em;
+    font-size: 1.2em;
     text-decoration: none;
     line-height: 1.2;
     cursor: cell;
@@ -100,7 +100,7 @@
     border: 2px white solid;
     padding: 25px;
     gap: 5px;
-    font-size: 0.8em;
+    font-size: 1em;
   }
 
   #main-container {
