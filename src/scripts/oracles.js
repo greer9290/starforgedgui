@@ -42,7 +42,9 @@ if(oraclesCnt.offsetParent) {
             categoryDropdown.appendChild(oracleOption);
         })
     
-    categoryDropdown.addEventListener("change", () => getSelected())
+    categoryDropdown.addEventListener("change", () => getSelected());
+
+		 getSelected();
 
     const getSelected = async () => {
         while(subcategoryDropdown.firstChild && subcategoryDropdown.removeChild(subcategoryDropdown.firstChild));
