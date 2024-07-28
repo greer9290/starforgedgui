@@ -62,7 +62,7 @@
     background:#0004dd;
   }
 
-  .nav-btn:hover ~ .nav-btn {
+  .nav-btn:hover .nav-btn {
     filter: blur(4px);
   }
 
