@@ -187,7 +187,7 @@
     padding: 25px;
     gap: 5px;
     overflow: auto;
-    margin: 0 auto;
+    margin: 10px;
     overflow-wrap: break-word;
     word-wrap: break-word;
   }
