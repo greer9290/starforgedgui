@@ -58,14 +58,16 @@
     isolation: isolate;
   }
 
-  .nav-btn:hover {
-    background:#0004dd;
-    filter: blur(0px);
-  }
-
   #navbar>button {
     filter: blur(2px);
   }
+
+.nav-btn:hover, .nav-btn:active {
+    background:#0004dd;
+    filter: blur(0px);
+    width: 110%;
+  }
+
 
   button {
     min-height: 65px;
