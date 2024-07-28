@@ -11,7 +11,8 @@ const rollMoveBtn = document.querySelector('button[id=roll-move-btn]');
 
     const getData = async () => {
         try {
-            const url = '/src/data/starforged/moves.json'; //raw content link to json for GH pages deployment
+            const url = 'https://raw.githubusercontent.com/greer9290/starforgedgui/main/src/data/starforged/moves.json' //raw content link to json for GH pages deployment
+            //const url = '/src/data/starforged/moves.json'; //for local editing
             const res = await fetch(url);
             let json = await res.json();
             return json;

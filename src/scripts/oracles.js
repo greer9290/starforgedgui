@@ -21,7 +21,8 @@ const rollOracleBtn = document.querySelector('button[id=roll-oracle-btn]');
 if(oraclesCnt.offsetParent) {
     const getData = async () => {
         try {
-            const url = '/src/data/starforged/oracles.json'; //raw content link to json for GH pages deployment
+            const url = 'https://raw.githubusercontent.com/greer9290/starforgedgui/main/src/data/starforged/oracles.json' //raw content link to json for GH pages deployment
+            //const url = '/src/data/starforged/oracles.json'; //for local editing
             const res = await fetch(url);
             let json = await res.json();
             return json;
