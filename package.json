@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "cors": "^2.8.5",
+    "dataforged": "^1.5.3",
     "serve": "^14.2.3"
   }
 }

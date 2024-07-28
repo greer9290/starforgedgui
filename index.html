@@ -9,15 +9,48 @@
 </head>
 
 <body>
-    <h1 class="main-heading">Starforged Oracle</h1>
-    <div id="main-container">
-        <div id="selection-container">
-            <select name="category-select" id="categories">Select Oracle Category</select>
+  <div id="grid-cnt">
+    <button id="shownav"><img id="navmenubtn" src="./src/media/images/hamburger.svg"/></button>  
+    <nav id="navbar">
+        <button class="nav-btn" id="oracles-btn">Oracles</button>
+        <button class="nav-btn" id="moves-btn">Moves</button>
+        <button class="nav-btn" id="encounters-btn">Encounters</button>
+        <button class="nav-btn" id="assets-btn">Assets</button>
+        <button class="nav-btn" id="truths-btn">Truths</button>
+    </nav>
+    <main id="content-container">
+        <div id="oracles-cnt">
+        <h1 class="main-heading">Oracles</h1>
+        <div class="page-cnt" id="oracles-container">
+            <div class="selection-container" id="oracles-sel-cnt">
+                <select class="category-select" id="categories">Select Oracle Category</select>
+            </div>
+            <button class="roll-oracle" id="roll-oracle-btn">Roll Oracle</button>
+            <div class="results" id="oracle-results">Results</div>        
         </div>
-        <button id="roll-oracle">Roll Oracle</button>
-        <div id="results">Results</div>        
-    </div>
+        </div>
+        <div id="moves-cnt">
+            <h1 class="main-heading">Moves</h1>
+            <div class="page-cnt" id="moves-container">
+                <div class="selection-container" id="moves-select-cnt">
+                    <select class="category-select" id="moves">Select a Move</select>
+                </div>
+                <button class="roll-oracle" id="roll-move-btn">Roll Move</button>        
+            </div>
+        </div>
+        <div id="encounters-cnt">
+            <h1 class="main-heading">Encounters</h1>
+        </div>
+        <div id="assets-cnt">
+            <h1 class="main-heading">Assets</h1>
+        </div>
+        <div id="truths-cnt">
+            <h1 class="main-heading">Truths</h1>
+        </div>
+    </main>
+</div>
 </body>
-<script src="src/scripts/main-script.js"></script>
-
+<script src="src/scripts/oracles.js" type="module"></script>
+<script src="src/scripts/moves.js" type="module"></script>
+<script src="src/scripts/nav.js" type="module"></script>
 </html>
