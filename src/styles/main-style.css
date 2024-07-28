@@ -181,7 +181,7 @@
   .desc-field, .results {
     display: flex;
     flex-flow: column wrap;
-    width: 95%;
+    width: 90%;
     border: 2px white solid;
     border-radius: 5px;
     padding: 25px;
