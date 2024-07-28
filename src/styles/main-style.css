@@ -60,9 +60,10 @@
 
   .nav-btn:hover {
     background:#0004dd;
+    filter: blur(0px);
   }
 
-  .nav-btn:hover #navbar>button {
+  #navbar>button {
     filter: blur(2px);
   }
 
