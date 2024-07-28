@@ -58,14 +58,16 @@
     isolation: isolate;
   }
 
-  #navbar>button {
+  .nav-btn {
     filter: blur(2px);
+    border-radius: 0px;
   }
 
 .nav-btn:hover, .nav-btn:active {
     background:#0004dd;
     filter: blur(0px);
     width: 110%;
+    border-radius: 5px;
   }
 
 
